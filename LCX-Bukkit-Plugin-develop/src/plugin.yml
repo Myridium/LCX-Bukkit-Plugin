@@ -6,6 +6,6 @@ authors:
 description: Access the Latinum Currency Exchange in-game.
 commands:
   lcx:
-     description: This should be a description.
+     description: Says hello to the player.
      usage: /lcx
     
