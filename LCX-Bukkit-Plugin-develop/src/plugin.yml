@@ -1,0 +1,11 @@
+name: LCX
+main: com.myridium.lcx.LCX_plugin
+version: 0.0
+authors:
+  - Murdock Grewar
+description: Access the Latinum Currency Exchange in-game.
+commands:
+  lcx:
+     description: This should be a description.
+     usage: /lcx
+    
