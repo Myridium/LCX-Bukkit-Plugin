@@ -1,5 +1,5 @@
 name: LCX
-main: com.myridium.lcx.LCX_plugin
+main: com.myridium.lcx.plugin.LCX_plugin
 version: 0.0
 authors:
   - Murdock Grewar
@@ -8,4 +8,14 @@ commands:
   lcx:
      description: Says hello to the player.
      usage: /lcx
+  login:
+     description: Logs the player on to the LCX banking server.
+     usage: /login <AccountID> <Password>
+  logout:
+     description: Logs the player out of the LCX banking server.
+     usage: /logout
+  balance:
+     description: Displays the user's Latinum balance.
+     usage: /balance
+  
     
