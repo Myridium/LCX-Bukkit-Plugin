@@ -5,7 +5,6 @@
  */
 package com.myridium.lcx.plugin;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,7 +19,7 @@ import shared.LCXDelegate;
 
 /**
  *
- * @author Murdock Grewar
+ * @author Murdock Grewar <https://github.com/Myridium>
  */
 public class LCX_plugin extends JavaPlugin {
     
@@ -64,6 +63,22 @@ public class LCX_plugin extends JavaPlugin {
             
             
             try {
+                //This doesn't depend on whether or not the player is in a banking session:
+                if (label.equals("create")) {
+                    if (args.length != 3) {
+                        return false;
+                    }
+                    if (!args[1].equals(args[2])) {
+                        playerSender.sendMessage(EnumUserInfo.PASSWORD_CONFIRM_MISMATCH.msg());
+                        return false;
+                    }
+                    LCXDelegate accountCreateDelegate = new LCXDelegate();
+                    String newAccountNum = accountCreateDelegate.newAccount(args[0],args[1]);
+                    
+                    playerSender.sendMessage(EnumUserInfo.NEW_ACCOUNT_NUMBER.msg() + newAccountNum);
+                    return true;
+                }
+
                 //Check to see if the player is already in a banking session
                 if (playerBankSessions.containsKey(playerUUID)) {
                     //The player is already in session.

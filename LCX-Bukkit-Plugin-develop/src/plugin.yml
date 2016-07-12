@@ -14,5 +14,8 @@ commands:
   balance:
      description: Displays the user's Latinum balance.
      usage: /balance
+  create:
+     description: Creates a new account associated with the given name.
+     usage: /create <name> <password> <confirm password>
   
     

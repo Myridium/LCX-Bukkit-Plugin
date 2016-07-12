@@ -16,6 +16,9 @@ public enum EnumUserInfo
     LOGIN_SUCCESS("§a§nLogin successful."),
     LOGIN_FAIL("§cFailed to login. Check your credentials."),
     
+    PASSWORD_CONFIRM_MISMATCH("§cThe passwords provided did not match."),
+    NEW_ACCOUNT_NUMBER("§a§nAccount created. Account number:   "),
+    
     BALANCE_FAIL("§cUnable to retrieve balance!"),
     
     WARN_LOGIN_FIRST("§3You must first login using /login."),
