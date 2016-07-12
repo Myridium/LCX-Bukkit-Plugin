@@ -100,6 +100,10 @@ public class LCX_plugin extends JavaPlugin {
 
                             case "transfer":
                                 
+                                if (args.length != 2) {
+                                    return false;
+                                }   
+                                
                                 try {
                                     Double.parseDouble(args[1]);
                                 } catch (NumberFormatException ne) {
