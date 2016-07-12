@@ -13,7 +13,7 @@ public enum EnumUserInfo
     {
     LOGOUT_SUCCESS("§a§nLogout successful."),
     LOGOUT_FAIL("§cLogout failed!"),
-    LOGIN_SUCCESS("§a§nLogin successful."),
+    LOGIN_SUCCESS("§a§nLogin successful. Account:   "),
     LOGIN_FAIL("§cFailed to login. Check your credentials."),
     
     PASSWORD_CONFIRM_MISMATCH("§cThe passwords provided did not match."),

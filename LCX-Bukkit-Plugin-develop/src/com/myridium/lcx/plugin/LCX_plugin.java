@@ -199,7 +199,7 @@ public class LCX_plugin extends JavaPlugin {
                 
                 if (loginSuccess) {
                     playerBankSessions.put(playerSender.getUniqueId().toString(), newSession);
-                    playerSender.sendMessage(EnumUserInfo.LOGIN_SUCCESS.msg());
+                    playerSender.sendMessage(EnumUserInfo.LOGIN_SUCCESS.msg() + accountID);
                     return true;
                 } else {
                     playerSender.sendMessage(EnumUserInfo.LOGIN_FAIL.msg());
