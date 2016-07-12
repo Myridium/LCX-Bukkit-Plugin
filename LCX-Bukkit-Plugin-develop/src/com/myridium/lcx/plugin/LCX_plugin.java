@@ -38,7 +38,8 @@ public class LCX_plugin extends JavaPlugin {
         //Loop over all key value pairs in the playerBankSessions and log everyone out of the server.
         
         playerBankSessions.entrySet().stream().forEach((kvp) -> {
-            logoutPlayer(kvp);
+            try {logoutPlayer(kvp);} 
+            catch (LCXDelegate.CommunicationException | LCXDelegate.UnexpectedResponseException e) {e.printStackTrace();}
         });
         
         /*
@@ -61,114 +62,89 @@ public class LCX_plugin extends JavaPlugin {
             Player playerSender = (Player) sender;
             String playerUUID = playerSender.getUniqueId().toString();
             
-            //Check to see if the player is already in a banking session
-            if (playerBankSessions.containsKey(playerUUID)) {
-                //The player is already in session.
-                
-                LCXDelegate playerSession = playerBankSessions.get(playerUUID);
-                switch(label) {
-                    case "login":
-                        playerSender.sendMessage("You are already logged in!");
-                        return true;
-                    case "transfer":
-                        /*
-                        double transferAmount;
-                        //Parsing the number could throw an error.
-                        try {
-                            transferAmount = Double.parseDouble(args[1]);
-                        }
-                        catch (NumberFormatException exc) {
-                            playerSender.sendMessage("Invalid transfer amount specified.");
-                            return false;
-                        }
-                        
-                        if (playerSession.transfer(args[0],transferAmount)) {
-                            playerSender.sendMessage("Transfer successful.");
-                            return true;
-                        } else {
-                            playerSender.sendMessage("Transfer was unsuccessful.");
-                            return true;
-                        }
-                        
-                        */
-                        playerSender.sendMessage("This feature is currently not supported.");
-                        return true;
-                    case "logout":
-                        
-                        //Find the entry corresponding to this user.
-                        Entry<String,LCXDelegate> playerSessionEntry = null;
-                        for(Entry<String,LCXDelegate> kvp : playerBankSessions.entrySet()) {
-                            if(kvp.getKey().equals(playerUUID)) {
-                                playerSessionEntry = kvp;
-                                break;
+            
+            try {
+                //Check to see if the player is already in a banking session
+                if (playerBankSessions.containsKey(playerUUID)) {
+                    //The player is already in session.
+
+                    LCXDelegate playerSession = playerBankSessions.get(playerUUID);
+
+                    if (label.equals("login")) {
+                        if (playerSession.isLoggedIn()) {
+                                playerSender.sendMessage("You are already logged in!");
+                                return true;
+                            } else {
+                                playerBankSessions.remove(playerUUID);
+                                return loginPlayer(playerSender,args);
                             }
+                    }
+
+                    if (playerSession.isLoggedIn()) {
+                        switch(label) {
+
+                            case "transfer":
+                                
+                                playerSender.sendMessage("This feature is currently not supported.");
+                                return true;
+                            case "logout":
+
+                                //Find the entry corresponding to this user.
+                                try {
+                                    logoutPlayer(playerSender);
+                                } catch (LCXDelegate.UnexpectedResponseException e) {
+                                    playerSender.sendMessage("Unexpected response from server. Contact an administrator.");
+                                }
+
+                                return true;
+
+                            case "balance":
+                                if (args.length > 0)
+                                    return false;
+
+                                double latAmount;
+                                boolean successB = false;
+                                try {
+                                    latAmount = playerSession.balance();
+                                    playerSender.sendMessage("Your Latinum balance is: " + String.valueOf(latAmount));
+                                    successB = true;
+                                } catch (LCXDelegate.NotLoggedInException | LCXDelegate.UnexpectedResponseException ex) {
+                                    Logger.getLogger(LCX_plugin.class.getName()).log(Level.SEVERE, null, ex);
+                                    ex.printStackTrace();
+                                }
+                                if (!successB)
+                                    playerSender.sendMessage("Unable to retrieve balance!");
+                                return true;
+                            default:
+                                return false;
                         }
-                        
-                        if (logoutPlayer(playerSessionEntry)) {
-                            playerSender.sendMessage("Logout successful.");
-                        } else {
-                            playerSender.sendMessage("Logout unsuccessful! Consult an administrator.");
+                    } else {
+                        try {logoutPlayer(playerSender);} catch (LCXDelegate.UnexpectedResponseException e) {
+                            Bukkit.getConsoleSender().sendMessage("Unexpected response from Latinum server when logging player out.");
+                            e.printStackTrace();
                         }
-                        
+                        playerSender.sendMessage("You must first login.");
                         return true;
-                        
-                    case "balance":
-                        if (args.length > 0)
-                            return false;
-                        
-                        double latAmount;
-                        boolean successB = false;
-                        try {
-                            latAmount = playerSession.balance();
-                            playerSender.sendMessage("Your Latinum balance is: " + String.valueOf(latAmount));
-                            successB = true;
-                        } catch (IOException ex) {
-                            Logger.getLogger(LCX_plugin.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        if (!successB)
-                            playerSender.sendMessage("Unable to retrieve balance!");
-                        return true;
-                    default:
-                        return false;
+                    }
+
                 }
-                
-                
-            } else {
+
                 //The player is not already in session.
                 if (!label.equals("login")) {
                     //Player is not logged in, yet is trying to issue a command that can only be done when logged in.
                     playerSender.sendMessage("You must first login using /login.");
                     return true;
                 }
-                
-                //If we get to this point, then the player is trying to use the login command.
-                if (args.length != 2) {
-                    playerSender.sendMessage("Incorrect usage of the /login command.");
-                    
-                    //I'm guessing that returning false causes the usage message to display.
-                    return false;
-                }
-                
-                //Begin a new session and add it to the `playerBankSessions' record.
-                LCXDelegate newSession = new LCXDelegate();
-                boolean loginSuccess;
-                try {
-                    Bukkit.getConsoleSender().sendMessage("Attempting login now...");
-                    loginSuccess = newSession.login(args[0],args[1]);
-                } catch (IOException ex) {
-                    Bukkit.getConsoleSender().sendMessage("There was an IOException while attempting login.");
-                    Logger.getLogger(LCX_plugin.class.getName()).log(Level.SEVERE, null, ex);
-                    loginSuccess = false;
-                }
-                
-                if (loginSuccess) {
-                    playerBankSessions.put(playerSender.getUniqueId().toString(), newSession);
-                    playerSender.sendMessage("Login successful.");
-                    return true;
-                } else {
-                    playerSender.sendMessage("Login unsuccessful.");
-                    return true;
-                }
+
+                return loginPlayer(playerSender,args);
+
+            } catch (LCXDelegate.CommunicationException e) {
+                playerSender.sendMessage("An error occured when trying to communicate with the server.");
+                return true;
+            } catch (LCXDelegate.UnexpectedResponseException e) {
+                //Many of these exceptions are already handled.
+                playerSender.sendMessage("The server sent a response that I couldn't interpret.");
+                return true;
             }
             
         }
@@ -179,22 +155,61 @@ public class LCX_plugin extends JavaPlugin {
         }
         
     }
+    
+    private boolean loginPlayer(Player playerSender, String[] args) throws LCXDelegate.CommunicationException {
+        //If we get to this point, then the player is trying to use the login command.
+                if (args.length != 2) {
+                    playerSender.sendMessage("Incorrect usage of the /login command.");
 
-    private boolean logoutPlayer(Entry<String,LCXDelegate> kvp) {
+                    //I'm guessing that returning false causes the usage message to display.
+                    return false;
+                }
+
+                try {
+                    return loginPlayer(playerSender,args[0],args[1]);
+                } catch (LCXDelegate.UnexpectedResponseException e) {
+                    playerSender.sendMessage("Did not recognise response from server. Login failed.");
+                    return true;
+                }
+    }
+
+    private boolean loginPlayer(Player playerSender, String accountID, String password) throws LCXDelegate.CommunicationException, LCXDelegate.UnexpectedResponseException {
+        //Begin a new session and add it to the `playerBankSessions' record.
+                LCXDelegate newSession = new LCXDelegate();
+                boolean loginSuccess;
+                    
+                Bukkit.getConsoleSender().sendMessage("Attempting login now...");
+                loginSuccess = newSession.login(accountID,password);
+                
+                if (loginSuccess) {
+                    playerBankSessions.put(playerSender.getUniqueId().toString(), newSession);
+                    playerSender.sendMessage("Login successful.");
+                    return true;
+                } else {
+                    playerSender.sendMessage("Login unsuccessful.");
+                    return true;
+                }
+    }
+    
+    private void logoutPlayer(Entry<String,LCXDelegate> kvp) throws LCXDelegate.CommunicationException, LCXDelegate.UnexpectedResponseException {
         
+        //Attempt to end the banking session.
         try {
-            //Attempt to end the banking session.
-            //If unsuccessful:
-            if (!kvp.getValue().logout()) {
-                Bukkit.getConsoleSender().sendMessage("Failed to log user " + kvp.getKey() + " out of their banking session.");
-                return false;
-            } else {
-                playerBankSessions.remove(kvp.getKey());
-                return true;
-            }
-        } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage("Failed to log user " + kvp.getKey() + " out of their banking session.");
-            return false;
+            kvp.getValue().dispose();
+        } catch (LCXDelegate.NotLoggedInException e) {
+            //Do nothing.
         }
+        playerBankSessions.remove(kvp.getKey());
+    }
+    
+    private void logoutPlayer(Player playerSender) throws LCXDelegate.CommunicationException, LCXDelegate.UnexpectedResponseException {
+        Entry<String,LCXDelegate> playerSessionEntry = null;
+        for(Entry<String,LCXDelegate> kvp : playerBankSessions.entrySet()) {
+            if(kvp.getKey().equals(playerSender.getUniqueId().toString())) {
+                playerSessionEntry = kvp;
+                break;
+            }
+        }
+        logoutPlayer(playerSessionEntry);
     }
 }
