@@ -23,10 +23,15 @@ public enum EnumUserInfo
     
     WARN_LOGIN_FIRST("§3You must first login using /login."),
     
+    TRANSFER_SUCCESS("§aFunds transferred."),
+    TRANSFER_FAIL("§cTransfer failed."),
+    
     ALREADY_LOGGED_IN("§3You are already logged in to an account!"),
     
     ERROR_LCX_SERVER_COMMUNICATION("§cThere was a problem communicating with the LCX server."),
-    ERROR_LCX_SERVER_UNKNOWN_RESPONSE("§cUnexpected response from the server. Contact an administrator.");
+    ERROR_LCX_SERVER_UNKNOWN_RESPONSE("§cUnexpected response from the server. Contact an administrator."),
+    ERROR_GENERIC("§cAn unspecified error occurred."),
+    INVALID_LATINUM_AMOUNT("§cInvalid Latinum amount specified.");
     
     
     private String msg;

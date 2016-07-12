@@ -100,7 +100,22 @@ public class LCX_plugin extends JavaPlugin {
 
                             case "transfer":
                                 
-                                playerSender.sendMessage("This feature is currently not supported.");
+                                try {
+                                    Double.parseDouble(args[1]);
+                                } catch (NumberFormatException ne) {
+                                    playerSender.sendMessage(EnumUserInfo.INVALID_LATINUM_AMOUNT.msg());
+                                    return false;
+                                }
+                                try {
+                                    if(playerSession.transfer(args[0], args[1])) {
+                                        playerSender.sendMessage(EnumUserInfo.TRANSFER_SUCCESS.msg());
+                                    } else {
+                                        playerSender.sendMessage(EnumUserInfo.TRANSFER_FAIL.msg());
+                                    }
+                                } catch (LCXDelegate.NotLoggedInException ne) {
+                                    playerSender.sendMessage(EnumUserInfo.ERROR_GENERIC.msg());
+                                }
+                                
                                 return true;
                             case "logout":
 
@@ -118,11 +133,11 @@ public class LCX_plugin extends JavaPlugin {
                                 if (args.length > 0)
                                     return false;
 
-                                double latAmount;
+                                String latAmount;
                                 boolean successB = false;
                                 try {
                                     latAmount = playerSession.balance();
-                                    playerSender.sendMessage("Your Latinum balance is: " + String.valueOf(latAmount));
+                                    playerSender.sendMessage("Your Latinum balance is: " + latAmount);
                                     successB = true;
                                 } catch (LCXDelegate.NotLoggedInException | LCXDelegate.UnexpectedResponseException ex) {
                                     Logger.getLogger(LCX_plugin.class.getName()).log(Level.SEVERE, null, ex);

@@ -17,5 +17,6 @@ commands:
   create:
      description: Creates a new account associated with the given name.
      usage: /create <name> <password> <confirm password>
-  
-    
+  transfer:
+     description: Transfer funds to the given account.
+     usage: /transfer <accountname> <amount>
