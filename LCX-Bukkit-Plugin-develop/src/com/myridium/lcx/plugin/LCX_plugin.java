@@ -124,7 +124,7 @@ public class LCX_plugin extends JavaPlugin {
                             Bukkit.getConsoleSender().sendMessage(EnumUserInfo.ERROR_LCX_SERVER_UNKNOWN_RESPONSE.msg());
                             e.printStackTrace();
                         }
-                        playerSender.sendMessage(EnumUserInfo.ALREADY_LOGGED_IN.msg());
+                        playerSender.sendMessage(EnumUserInfo.WARN_LOGIN_FIRST.msg());
                         return true;
                     }
 
