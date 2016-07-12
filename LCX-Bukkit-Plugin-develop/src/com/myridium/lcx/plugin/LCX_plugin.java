@@ -92,6 +92,7 @@ public class LCX_plugin extends JavaPlugin {
                                 //Find the entry corresponding to this user.
                                 try {
                                     logoutPlayer(playerSender);
+                                    playerSender.sendMessage(EnumUserInfo.LOGOUT_SUCCESS.msg());
                                 } catch (LCXDelegate.UnexpectedResponseException e) {
                                     playerSender.sendMessage(EnumUserInfo.ERROR_LCX_SERVER_UNKNOWN_RESPONSE.msg());
                                 }
