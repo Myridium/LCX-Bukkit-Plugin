@@ -11,9 +11,9 @@ package com.myridium.lcx.plugin;
  */
 public enum EnumUserInfo
     {
-    LOGOUT_SUCCESS("§aYou are logged out."),
+    LOGOUT_SUCCESS("§a§nLogout successful."),
     LOGOUT_FAIL("§cLogout failed!"),
-    LOGIN_SUCCESS("§aLogin successful."),
+    LOGIN_SUCCESS("§a§nLogin successful."),
     LOGIN_FAIL("§cFailed to login. Check your credentials."),
     
     BALANCE_FAIL("§cUnable to retrieve balance!"),
