@@ -72,7 +72,7 @@ public class LCX_plugin extends JavaPlugin {
 
                     if (label.equals("login")) {
                         if (playerSession.isLoggedIn()) {
-                                playerSender.sendMessage("You are already logged in!");
+                                playerSender.sendMessage(EnumUserInfo.ALREADY_LOGGED_IN.msg());
                                 return true;
                             } else {
                                 playerBankSessions.remove(playerUUID);
@@ -93,7 +93,7 @@ public class LCX_plugin extends JavaPlugin {
                                 try {
                                     logoutPlayer(playerSender);
                                 } catch (LCXDelegate.UnexpectedResponseException e) {
-                                    playerSender.sendMessage("Unexpected response from server. Contact an administrator.");
+                                    playerSender.sendMessage(EnumUserInfo.ERROR_LCX_SERVER_UNKNOWN_RESPONSE.msg());
                                 }
 
                                 return true;
@@ -113,17 +113,17 @@ public class LCX_plugin extends JavaPlugin {
                                     ex.printStackTrace();
                                 }
                                 if (!successB)
-                                    playerSender.sendMessage("Unable to retrieve balance!");
+                                    playerSender.sendMessage(EnumUserInfo.BALANCE_FAIL.msg());
                                 return true;
                             default:
                                 return false;
                         }
                     } else {
                         try {logoutPlayer(playerSender);} catch (LCXDelegate.UnexpectedResponseException e) {
-                            Bukkit.getConsoleSender().sendMessage("Unexpected response from Latinum server when logging player out.");
+                            Bukkit.getConsoleSender().sendMessage(EnumUserInfo.ERROR_LCX_SERVER_UNKNOWN_RESPONSE.msg());
                             e.printStackTrace();
                         }
-                        playerSender.sendMessage("You must first login.");
+                        playerSender.sendMessage(EnumUserInfo.ALREADY_LOGGED_IN.msg());
                         return true;
                     }
 
@@ -132,18 +132,18 @@ public class LCX_plugin extends JavaPlugin {
                 //The player is not already in session.
                 if (!label.equals("login")) {
                     //Player is not logged in, yet is trying to issue a command that can only be done when logged in.
-                    playerSender.sendMessage("You must first login using /login.");
+                    playerSender.sendMessage(EnumUserInfo.WARN_LOGIN_FIRST.msg());
                     return true;
                 }
 
                 return loginPlayer(playerSender,args);
 
             } catch (LCXDelegate.CommunicationException e) {
-                playerSender.sendMessage("An error occured when trying to communicate with the server.");
+                playerSender.sendMessage(EnumUserInfo.ERROR_LCX_SERVER_COMMUNICATION.msg());
                 return true;
             } catch (LCXDelegate.UnexpectedResponseException e) {
                 //Many of these exceptions are already handled.
-                playerSender.sendMessage("The server sent a response that I couldn't interpret.");
+                playerSender.sendMessage(EnumUserInfo.ERROR_LCX_SERVER_UNKNOWN_RESPONSE.msg());
                 return true;
             }
             
@@ -159,16 +159,16 @@ public class LCX_plugin extends JavaPlugin {
     private boolean loginPlayer(Player playerSender, String[] args) throws LCXDelegate.CommunicationException {
         //If we get to this point, then the player is trying to use the login command.
                 if (args.length != 2) {
-                    playerSender.sendMessage("Incorrect usage of the /login command.");
+                    //playerSender.sendMessage("Incorrect usage of the /login command.");
 
-                    //I'm guessing that returning false causes the usage message to display.
+                    //Returning false causes the usage message to display.
                     return false;
                 }
 
                 try {
                     return loginPlayer(playerSender,args[0],args[1]);
                 } catch (LCXDelegate.UnexpectedResponseException e) {
-                    playerSender.sendMessage("Did not recognise response from server. Login failed.");
+                    playerSender.sendMessage(EnumUserInfo.ERROR_LCX_SERVER_UNKNOWN_RESPONSE.msg());
                     return true;
                 }
     }
@@ -183,10 +183,10 @@ public class LCX_plugin extends JavaPlugin {
                 
                 if (loginSuccess) {
                     playerBankSessions.put(playerSender.getUniqueId().toString(), newSession);
-                    playerSender.sendMessage("Login successful.");
+                    playerSender.sendMessage(EnumUserInfo.LOGIN_SUCCESS.msg());
                     return true;
                 } else {
-                    playerSender.sendMessage("Login unsuccessful.");
+                    playerSender.sendMessage(EnumUserInfo.LOGIN_FAIL.msg());
                     return true;
                 }
     }
@@ -212,6 +212,5 @@ public class LCX_plugin extends JavaPlugin {
             }
         }
         logoutPlayer(playerSessionEntry);
-        playerSender.sendMessage("You are logged out.");
     }
 }
