@@ -200,6 +200,7 @@ public class LCX_plugin extends JavaPlugin {
             //Do nothing.
         }
         playerBankSessions.remove(kvp.getKey());
+        
     }
     
     private void logoutPlayer(Player playerSender) throws LCXDelegate.CommunicationException, LCXDelegate.UnexpectedResponseException {
@@ -211,5 +212,6 @@ public class LCX_plugin extends JavaPlugin {
             }
         }
         logoutPlayer(playerSessionEntry);
+        playerSender.sendMessage("You are logged out.");
     }
 }
