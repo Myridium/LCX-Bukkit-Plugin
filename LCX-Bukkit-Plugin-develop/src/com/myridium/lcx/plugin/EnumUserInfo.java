@@ -11,6 +11,13 @@ package com.myridium.lcx.plugin;
  */
 public enum EnumUserInfo
     {
+    
+    USAGE_CREATE("Used 'create' incorrectly."),
+    USAGE_LOGOUT("Used 'logout' incorrectly."),
+    USAGE_LOGIN("Used 'login' incorrectly."),
+    USAGE_TRANSFER("Used 'transfer' incorrectly."),
+    USAGE_BALANCE("Used 'balance' incorrectly."),
+    
     LOGOUT_SUCCESS("§a§nLogout successful."),
     LOGOUT_FAIL("§cLogout failed!"),
     LOGIN_SUCCESS("§a§nLogin successful. Account:   "),
