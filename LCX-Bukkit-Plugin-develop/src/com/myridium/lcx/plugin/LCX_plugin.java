@@ -115,7 +115,6 @@ public class LCX_plugin extends JavaPlugin {
             if (entry.getValue().isDone()) {
                 try {
                     player.sendMessage(entry.getValue().get());
-                    continue;
                 } catch (InterruptedException ex) {
                     Logger.getLogger(LCX_plugin.class.getName()).log(Level.SEVERE, null, ex);
                     ex.printStackTrace();
