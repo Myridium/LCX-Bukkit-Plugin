@@ -115,12 +115,14 @@ public class LCX_plugin extends JavaPlugin {
         for (Entry<String,Future<String>> entry : awaitingCallback.entrySet()) {
             Player player = Bukkit.getPlayer(UUID.fromString(entry.getKey()));
             if (!player.isOnline()) {
-                awaitingCallback.remove(entry.getKey());
+                awaitingCallback.entrySet().remove(entry);
                 continue;
             }
             if (entry.getValue().isDone()) {
                 try {
-                    player.sendMessage(entry.getValue().get());
+                    String msg;
+                    msg = entry.getValue().get();
+                    player.sendMessage(msg);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(LCX_plugin.class.getName()).log(Level.SEVERE, null, ex);
                     ex.printStackTrace();
@@ -131,7 +133,7 @@ public class LCX_plugin extends JavaPlugin {
                 
                 //Not sure about this:
                 entry.getValue().cancel(true);
-                awaitingCallback.remove(entry.getKey());
+                awaitingCallback.entrySet().remove(entry);
                 continue;
             }
         }
@@ -185,6 +187,7 @@ public class LCX_plugin extends JavaPlugin {
                 break;
             }
         }
+        
         return playerSessionEntry;
     }
     
