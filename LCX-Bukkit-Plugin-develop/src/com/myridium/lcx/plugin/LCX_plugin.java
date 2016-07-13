@@ -24,11 +24,13 @@ import shared.LCXDelegate;
 public class LCX_plugin extends JavaPlugin {
     
     //A map of in-game player names to the authentication token strings associated with their bank session.
-    Map<String,LCXDelegate> playerBankSessions;
+    private Map<String,LCXDelegate> playerBankSessions;
+    private int LCXTimeout;
     
     @Override
     public void onEnable() {
         //
+        LCXTimeout = this.getConfig().getInt("LCXTimeout");
         playerBankSessions = new HashMap<>();
     }
     
@@ -72,7 +74,7 @@ public class LCX_plugin extends JavaPlugin {
                         playerSender.sendMessage(EnumUserInfo.PASSWORD_CONFIRM_MISMATCH.msg());
                         return false;
                     }
-                    LCXDelegate accountCreateDelegate = new LCXDelegate();
+                    LCXDelegate accountCreateDelegate = new LCXDelegate(LCXTimeout);
                     String newAccountNum = accountCreateDelegate.newAccount(args[0],args[1]);
                     
                     playerSender.sendMessage(EnumUserInfo.NEW_ACCOUNT_NUMBER.msg() + newAccountNum);
@@ -210,7 +212,7 @@ public class LCX_plugin extends JavaPlugin {
 
     private boolean loginPlayer(Player playerSender, String accountID, String password) throws LCXDelegate.CommunicationException, LCXDelegate.UnexpectedResponseException {
         //Begin a new session and add it to the `playerBankSessions' record.
-                LCXDelegate newSession = new LCXDelegate();
+                LCXDelegate newSession = new LCXDelegate(LCXTimeout);
                 boolean loginSuccess;
                     
                 Bukkit.getConsoleSender().sendMessage("Attempting login now...");
