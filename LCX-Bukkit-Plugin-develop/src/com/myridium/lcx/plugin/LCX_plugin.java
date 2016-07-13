@@ -27,25 +27,31 @@ import shared.LCXDelegate;
  */
 public class LCX_plugin extends JavaPlugin {
     
+    //Variables pulled from config.yml:
+    private int TASK_END_CHECK_PERIOD_IN_TICKS;
+    private int LCXTimeout;
+    
     //A map of in-game player names to the authentication token strings associated with their bank session.
     //May cause thread issues...
     private Map<String,LCXDelegate> playerBankSessions;
     //Lists the players who are waiting for the MC chat to give them a reply to their request.
     private Map<String,Future<String>> awaitingCallback;
-    private int LCXTimeout;
     private int replyTask;
     
     @Override
     public void onEnable() {
         //
         LCXTimeout = this.getConfig().getInt("LCXTimeout");
+        TASK_END_CHECK_PERIOD_IN_TICKS = this.getConfig().getInt("refreshPeriodInTicks");
+        
+        
         playerBankSessions = new HashMap<>();
         awaitingCallback = new HashMap<>();
         
         replyTask = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             public void run() {
                 sendReplies();
-            }}, 0, 2);
+            }}, 0, TASK_END_CHECK_PERIOD_IN_TICKS);
     }
     
     @Override
