@@ -1,0 +1,22 @@
+name: LCX
+main: com.myridium.lcx.plugin.LCX_plugin
+version: 0.0
+authors:
+  - Murdock Grewar
+description: Access the Latinum Currency Exchange in-game.
+commands:
+  login:
+     description: Logs the player on to the LCX banking server.
+     usage: /login <AccountID> <Password>
+  logout:
+     description: Logs the player out of the LCX banking server.
+     usage: /logout
+  balance:
+     description: Displays the user's Latinum balance.
+     usage: /balance
+  create:
+     description: Creates a new account associated with the given name.
+     usage: /create <name> <password> <confirm password>
+  transfer:
+     description: Transfer funds to the given account.
+     usage: /transfer <accountname> <amount>
