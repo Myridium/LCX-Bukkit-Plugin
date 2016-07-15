@@ -6,7 +6,7 @@ authors:
 description: Access the Latinum Currency Exchange in-game.
 commands:
   login:
-     description: Logs the player on to the LCX banking server.
+     description: Logs the player on to the LCX banking server. Password will be visible in the server console.
      usage: /login <AccountID> <Password>
   logout:
      description: Logs the player out of the LCX banking server.
@@ -15,8 +15,8 @@ commands:
      description: Displays the user's Latinum balance.
      usage: /balance
   create:
-     description: Creates a new account associated with the given name.
+     description: Creates a new account associated with the given name. Password will be visible in the server console.
      usage: /create <name> <password> <confirm password>
   transfer:
      description: Transfer funds to the given account.
-     usage: /transfer <accountname> <amount>
+     usage: /transfer <accountID> <amount>
