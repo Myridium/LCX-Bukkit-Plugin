@@ -18,6 +18,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import shared.LCXDelegate;
 
@@ -71,18 +73,27 @@ public class LCX_plugin extends JavaPlugin {
             
     }
     
+    @EventHandler
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        
+            String[] args = event.getMessage().split(" ");
+            Player playerSender = event.getPlayer();
+            String label = args[0];
+            
+            if (label == "create" || label == "login") {
+                onCommand(playerSender, null,label,args);
+                event.setCancelled(true);
+            }
+            
+            
+    }
+    
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         
-        if (sender instanceof Player) {
-            
-            //When the player sends a command like "/lcx hello chum", then:
-            //arg[0] = hello
-            //arg[1] = chum
-            //label = lcx
-            
-            
-            
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("This command must be run in-game.");
+        } else {
             Player playerSender = (Player) sender;
             String playerUUID = playerSender.getUniqueId().toString();
             
@@ -100,14 +111,9 @@ public class LCX_plugin extends JavaPlugin {
             awaitingCallback.put(playerUUID, ChatReply);
             
             return true;
-            
-        }
-        else
-        {
-            sender.sendMessage("This command must be run in-game.");
-            return true;
         }
         
+        return true;
     }
     
     private void sendReplies() {
@@ -168,11 +174,8 @@ public class LCX_plugin extends JavaPlugin {
     private String logoutPlayer(Entry<String,LCXDelegate> kvp) throws LCXDelegate.CommunicationException, LCXDelegate.UnexpectedResponseException {
         
         //Attempt to end the banking session.
-        try {
-            kvp.getValue().dispose();
-        } catch (LCXDelegate.NotLoggedInException e) {
-            //Do nothing.
-        }
+        kvp.getValue().dispose();
+        
         playerBankSessions.remove(kvp.getKey());
         
         return EnumUserInfo.LOGOUT_SUCCESS.msg();
@@ -305,16 +308,4 @@ public class LCX_plugin extends JavaPlugin {
                 return (EnumUserInfo.ERROR_LCX_SERVER_UNKNOWN_RESPONSE.msg());
             }
     }
-    
-    /*
-    private Future<String> FutureString(String futStr) {
-        return (this.getServer().getScheduler().callSyncMethod(this, new Callable<String>() {
- 
-                            public String call() {
-                                return futStr;
-                            }
-
-                        }));
-    }
-    */
 }
