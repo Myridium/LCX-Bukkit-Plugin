@@ -168,11 +168,8 @@ public class LCX_plugin extends JavaPlugin {
     private String logoutPlayer(Entry<String,LCXDelegate> kvp) throws LCXDelegate.CommunicationException, LCXDelegate.UnexpectedResponseException {
         
         //Attempt to end the banking session.
-        try {
-            kvp.getValue().dispose();
-        } catch (LCXDelegate.NotLoggedInException e) {
-            //Do nothing.
-        }
+        
+        kvp.getValue().dispose();
         playerBankSessions.remove(kvp.getKey());
         
         return EnumUserInfo.LOGOUT_SUCCESS.msg();
